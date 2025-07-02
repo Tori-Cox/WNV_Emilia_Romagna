@@ -1,27 +1,9 @@
-# WNV_Emilia_Romagna
-
-This repository contains code to develop and run the spatiotemporal mixed-effects regression models described in the paper 'Spatiotemporal association between West Nile virus prevalence in Culex pipiens mosquitoes and the environment in Emilia-Romagna, Italy'. 
+# WNV transmission in _Culex mosquitoes_ in Emilia-Romagna
 
 ## Repository overview
-This repository contains scripts to:
-- 
 
-## Code
-All analyses can be run from the main.R file, which calls scripts to run the analysis (contained in the scripts folder) and functions (contained in the R folder). The purpose of each R file is described below.
+This repository contains code to develop and run the spatiotemporal mixed-effects regression models described in the paper 'Meteorological and environmental drivers of West Nile virus prevalence in _Culex pipiens_ mosquitoes in Emilia-Romagna, Italy in 2013 to 2022.'
 
-### Scripts
-#### 
-  
-#### 
-  
-#### 
+The raw entomological and ornithological data analysed in the paper were obtained through a data sharing agreement and cannot be openly shared; however, the estimated weekly mosquito WNV prevalence and all meteorological and environmental variables are made available in this repository. 
 
-#### 
-
-#### 
-
-#### 
-
-
-### R
-#### functions.R_
+All analyses can be run from the main.R file, which calls scripts to run the analysis (contained in the scripts folder) and functions (contained in the R folder). 
