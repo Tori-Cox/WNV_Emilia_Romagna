@@ -1,4 +1,4 @@
-# WNV transmission in _Culex mosquitoes_ in Emilia-Romagna
+# WNV transmission in _Culex pipiens_ mosquitoes in Emilia-Romagna
 
 ## Repository overview
 
