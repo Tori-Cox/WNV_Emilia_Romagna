@@ -1,6 +1,5 @@
-source("R/setup_univariable_stacks.R")
 
-data_stack<-stk.yz
+data_stack <- stk.yz
 temp_data <- inla.stack.data(data_stack)
 
 hyper.rw2.clim <- list(theta = list(prior="pc.prec", param=c(1, 0.1))) 
@@ -11,10 +10,10 @@ pcgprior <- list(prior = 'pc.gamma', param = 1)
 
 ### run linear univar ----------------------------------------------------------
 
-res<-list()
-dataframe <-list()
+res <- list()
+dataframe <- list()
 
-variable_z_tot <- names(temp_data)[c(56:89)]
+variable_z_tot <- names(temp_data)[c(56:90)]
 if(run=="short"){
   variable_z_tot<-variable_z_tot[4]
 }
@@ -27,7 +26,7 @@ for(i in 1:length(variable_z_tot)){
     temp_data[[variable_z_tot[i]]]
   
   
-  res[[i]] <- res1 <- inla(formula, 
+  res[[i]] <- inla(formula, 
                            family = c("gamma", "binomial"),
                            data = inla.stack.data(data_stack), 
                            control.predictor = list(A = inla.stack.A(data_stack)), 
@@ -58,8 +57,8 @@ for(i in 1:length(variable_z_tot)){
 
 ### run non linear univar ------------------------------------------------------
 
-res<-list()
-dataframe <-list()
+res <- list()
+dataframe <- list()
 
 variable_z_tot <- names(temp_data)[c(7:55)]
 variable_y_tot <- names(temp_data)[c(98:146)]
@@ -80,7 +79,7 @@ for(i in 1:length(variable_z_tot)){
       scale.model = TRUE, constr = TRUE, hyper = hyper.rw2.clim)
   
   
-  res[[i]] <- res1 <- inla(formula, 
+  res[[i]] <- inla(formula, 
                            family = c("gamma", "binomial"),
                            data = inla.stack.data(data_stack), 
                            control.predictor = list(A = inla.stack.A(data_stack)), 

@@ -1,22 +1,21 @@
-visualise_field_means <- function(res, stk.yz, mesh, m=10, summary="median"){
+visualise_field_medians <- function(res, stk.yz, mesh, m=10, summary="median"){
   
-  if(summary %in% c("median", "ciU", "ciL")==F){
+  if(!summary %in% c("median", "ciU", "ciL")){
     print("summary must be one of median, ciU, or ciL")
   }else{
   
   idx.z <- inla.stack.index(stk.yz, 'est.z')$data
   idx.y <- inla.stack.index(stk.yz, 'est.y')$data
   
-  nxy<-c(200,200)
   projgrid <- inla.mesh.projector(
     mesh_n1, 
     xlim = range(mesh_n1$loc[,1]),
-    ylim = range(mesh_n1$loc[,2]),
-    dims = nxy)
+    ylim = range(mesh_n1$loc[,2]))
   
   cp = colorRampPalette(c("blue","cyan","yellow","red"))
+  new_shapefile_sf <- sf::as_Spatial(new_shapefile)
   
-  zmean <-ymean <-zsd <-ysd<-zlo <-ylo<-zupp <-yupp <-list()
+  zmean <- ymean <- zsd <- ysd <- zlo <- ylo <-zupp <-yupp <-list()
   for (j in 1:m){
     zmean[[j]] <- inla.mesh.project(
       projgrid, res$summary.random$x$mean[field.z.idx$x.group == j])
@@ -36,67 +35,61 @@ visualise_field_means <- function(res, stk.yz, mesh, m=10, summary="median"){
     yupp[[j]] <- inla.mesh.project(
       projgrid, res$summary.random$u$`0.975quant`[field.y.idx$u.group == j])
   }
-  zstore<-ystore<-z2store<-y2store<-z3store<-y3store<-list()
+  zstore <- ystore <- z2store <- y2store <- z3store <- y3store <- list()
   for(i in 1:m){
     zstore[[i]]<- levelplot(row.values=projgrid$x,
                             column.values=projgrid$y,
                             x=zmean[[i]],
                             col.regions=cp,
                             at = c(-Inf, seq(-3, 3, by = 0.1), Inf),
-                            contour=F,labels=F,#pretty=T,
-                            #main = as.expression("mu"),#paste0(i+2012),
+                            contour=F,labels=F,
                             xlab=NULL,ylab=NULL,scales=list(draw=FALSE))+ 
-      latticeExtra::layer(sp.polygons(new_shapefile, lwd=0.9, col='black'))#+
+      latticeExtra::layer(sp.polygons(new_shapefile_sf, lwd=0.9, col='black'))#+
     
     ystore[[i]]<- levelplot(row.values=projgrid$x,
                             column.values=projgrid$y,
                             x=ymean[[i]],
                             col.regions=cp,
                             at = c(-Inf, seq(-0.6, 1, by = 0.1), Inf),
-                            contour=F,labels=F,#pretty=T,
-                            #main = "\U2208",#paste0(i+2012),
+                            contour=F,labels=F,
                             xlab=NULL,ylab=NULL,scales=list(draw=FALSE))+ 
-      latticeExtra::layer(sp.polygons(new_shapefile, lwd=0.9, col='black'))#+
+      latticeExtra::layer(sp.polygons(new_shapefile_sf, lwd=0.9, col='black'))#+
     
     z2store[[i]]<- levelplot(row.values=projgrid$x,
                              column.values=projgrid$y,
                              x=zlo[[i]],
                              col.regions=cp,
-                             at = c(-Inf, seq(-6,1, by = 0.05), Inf),
-                             contour=F,labels=F,#pretty=T,
-                             #main = "z sd",#paste0(i+2012),
+                             at = c(-Inf, seq(-10, -3, by = 0.05), Inf),
+                             contour=F,labels=F,
                              xlab=NULL,ylab=NULL,scales=list(draw=FALSE))+ 
-      latticeExtra::layer(sp.polygons(new_shapefile, lwd=0.9, col='black'))#+
+      latticeExtra::layer(sp.polygons(new_shapefile_sf, lwd=0.9, col='black'))#+
     
     y2store[[i]]<- levelplot(row.values=projgrid$x,
                              column.values=projgrid$y,
                              x=ylo[[i]],
                              col.regions=cp,
-                             at = c(-Inf, seq(-1.5, 0.5, by = 0.05), Inf),
-                             contour=F,labels=F,#pretty=T,
-                             #main = "y sd",#paste0(i+2012),
+                             at = c(-Inf, seq(-1.5, 0, by = 0.05), Inf),
+                             contour=F,labels=F,
                              xlab=NULL,ylab=NULL,scales=list(draw=FALSE))+ 
-      latticeExtra::layer(sp.polygons(new_shapefile, lwd=0.9, col='black'))#+
+      latticeExtra::layer(sp.polygons(new_shapefile_sf, lwd=0.9, col='black'))#+
     
     z3store[[i]]<- levelplot(row.values=projgrid$x,
                              column.values=projgrid$y,
                              x=zupp[[i]],
                              col.regions=cp,
-                             at = c(-Inf, seq(-1,5, by = 0.05), Inf),
-                             contour=F,labels=F,#pretty=T,
-                             #main = "z sd",#paste0(i+2012),
+                             at = c(-Inf, seq(-1, 10, by = 0.05), Inf),
+                             contour=F,labels=F,
                              xlab=NULL,ylab=NULL,scales=list(draw=FALSE))+ 
-      latticeExtra::layer(sp.polygons(new_shapefile, lwd=0.9, col='black'))#+
+      latticeExtra::layer(sp.polygons(new_shapefile_sf, lwd=0.9, col='black'))#+
     
     y3store[[i]]<- levelplot(row.values=projgrid$x,
                              column.values=projgrid$y,
                              x=yupp[[i]],
                              col.regions=cp,
-                             at = c(-Inf, seq(0,1.4, by = 0.05), Inf),
-                             contour=F,labels=F,#pretty=T,
-                             #main = "y sd",#paste0(i+2012),
+                             at = c(-Inf, seq(0, 1.4, by = 0.05), Inf),
+                             contour=F,labels=F,
                              xlab=NULL,ylab=NULL,scales=list(draw=FALSE))+ 
-      latticeExtra::layer(sp.polygons(new_shapefile, lwd=0.9, col='black'))
+      latticeExtra::layer(sp.polygons(new_shapefile_sf, lwd=0.9, col='black'))
   }
   
   a<-plot_grid(zstore[[1]], 
@@ -109,9 +102,7 @@ visualise_field_means <- function(res, stk.yz, mesh, m=10, summary="median"){
                zstore[[8]], 
                zstore[[9]], 
                zstore[[10]], 
-               ncol=4, labels = c("         2013", "         2014", "         2015", "         2016", "         2017", "         2018",
-                                  "         2019", "         2020", "         2021", "         2022"))
-  
+               ncol=4)
   b<-plot_grid(z2store[[1]], 
                z2store[[2]],  
                z2store[[3]],  
@@ -122,12 +113,7 @@ visualise_field_means <- function(res, stk.yz, mesh, m=10, summary="median"){
                z2store[[8]], 
                z2store[[9]], 
                z2store[[10]], 
-               ncol=4, labels = c("         2013", "         2014", "         2015", "         2016", "         2017", "         2018",
-                                  "         2019", "         2020", "         2021", "         2022"))
-  
-  #plot_grid(a,b,ncol=1,labels="AUTO")
-  
-  
+               ncol=4)
   C<-plot_grid(ystore[[1]], 
                ystore[[2]],  
                ystore[[3]],  
@@ -138,9 +124,7 @@ visualise_field_means <- function(res, stk.yz, mesh, m=10, summary="median"){
                ystore[[8]], 
                ystore[[9]], 
                ystore[[10]], 
-               ncol=4, labels = c("         2013", "         2014", "         2015", "         2016", "         2017", "         2018",
-                                  "         2019", "         2020", "         2021", "         2022"))
-  
+               ncol=4)
   D<-plot_grid(y2store[[1]], 
                y2store[[2]],  
                y2store[[3]],  
@@ -151,9 +135,7 @@ visualise_field_means <- function(res, stk.yz, mesh, m=10, summary="median"){
                y2store[[8]], 
                y2store[[9]], 
                y2store[[10]], 
-               ncol=4, labels = c("         2013", "         2014", "         2015", "         2016", "         2017", "         2018",
-                                  "         2019", "         2020", "         2021", "         2022"))
-  
+               ncol=4)
   e<-plot_grid(y3store[[1]], 
                y3store[[2]],  
                y3store[[3]],  
@@ -164,8 +146,7 @@ visualise_field_means <- function(res, stk.yz, mesh, m=10, summary="median"){
                y3store[[8]], 
                y3store[[9]], 
                y3store[[10]], 
-               ncol=4, labels = c("         2013", "         2014", "         2015", "         2016", "         2017", "         2018",
-                                  "         2019", "         2020", "         2021", "         2022"))
+               ncol=4) 
   g<-plot_grid(z3store[[1]], 
                z3store[[2]],  
                z3store[[3]],  
@@ -176,14 +157,14 @@ visualise_field_means <- function(res, stk.yz, mesh, m=10, summary="median"){
                z3store[[8]], 
                z3store[[9]], 
                z3store[[10]], 
-               ncol=4, labels = c("         2013", "         2014", "         2015", "         2016", "         2017", "         2018",
-                                  "         2019", "         2020", "         2021", "         2022"))
+               ncol=4)
   
   if(summary=="median"){plot_grid(a,C,ncol=1, labels=c("A", "B"))->field}
   if(summary=="ciL"){plot_grid(b,D,ncol=1,labels=c("A", "B"))->field}
   if(summary=="ciU"){plot_grid(g,e,ncol=1,labels=c("A", "B"))->field}
   
   return(field)
+  }
 }
 
 
@@ -231,4 +212,4 @@ plot_field_parameters <- function(res){
   
   return(plot_grid)
 }
-}
+

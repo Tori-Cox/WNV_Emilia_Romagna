@@ -1,13 +1,10 @@
-source("R/setup_univariable_stacks.R")
-source("R/plot_models.R")
 
-data_stack<-stk.yz
+data_stack <- stk.yz
 
 ### field models 
 cg <- list(model = 'iid')
 cg2 <- list(model = 'ar1')
 pcgprior <- list(prior = 'pc.gamma', param = 1)
-
 
 formula <- Y ~ -1 + z.intercept + y.intercept + 
   f(x, group = x.group, model = spde,control.group = cg2) + 

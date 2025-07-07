@@ -32,12 +32,11 @@ final_model <- inla(formula,
                        control.predictor = list(A = inla.stack.A(data_stack), 
                                                 compute=TRUE), 
                        control.family =list(list(link="log", hyper=list(prec=pcgprior)), list(link="logit")),
-                    control.compute = list(waic = TRUE, 
-                                           cpo=T,
-                                           config=TRUE, return.marginals.predictor=TRUE),
-                    control.inla = list(int.strategy = "eb"),verbose = F)
+                       control.compute = list(waic = TRUE, cpo=T,
+                                               config=TRUE, return.marginals.predictor=TRUE),
+                       control.inla = list(int.strategy = "eb"),verbose = F)
 
-final<-res$summary.random$WEEKLY_AV_TMIN_03_z
+final<-final_model$summary.random$WEEKLY_AV_TMIN_03_z
 ggplot(final)+
   geom_line(aes(ID,y=mean))+
   geom_ribbon(aes(x=ID,ymin=`0.025quant`,ymax=`0.975quant`), alpha=0.2)+
@@ -45,7 +44,7 @@ ggplot(final)+
   theme_bw()+
   labs(x=paste0("Average minimum temperature (","\u00B0","C)"), y="Coefficients (95% CrI)")->a
 
-final<-res$summary.random$WEEKLY_AV_TMIN_03_y
+final<-final_model$summary.random$WEEKLY_AV_TMIN_03_y
 ggplot(final)+
   geom_line(aes(ID,y=mean))+
   geom_ribbon(aes(x=ID,ymin=`0.025quant`,ymax=`0.975quant`), alpha=0.2)+
@@ -53,7 +52,7 @@ ggplot(final)+
   theme_bw()+
   labs(x=paste0("Average minimum temperature (","\u00B0","C)"), y="Coefficients (95% CrI)")->b
 
-final<-res$summary.random$WEEKLY_AV_RAD_01_z
+final<-final_model$summary.random$WEEKLY_AV_RAD_01_z
 ggplot(final)+
   geom_line(aes(ID,y=mean))+
   geom_ribbon(aes(x=ID,ymin=`0.025quant`,ymax=`0.975quant`), alpha=0.2)+
@@ -61,7 +60,7 @@ ggplot(final)+
   theme_bw()+
   labs(x=paste0("Average radiation (MJ m-2)"), y="Coefficients (95% CrI)")->c
 
-final<-res$summary.random$WEEKLY_AV_RAD_01_y
+final<-final_model$summary.random$WEEKLY_AV_RAD_01_y
 ggplot(final)+
   geom_line(aes(ID,y=mean))+
   geom_ribbon(aes(x=ID,ymin=`0.025quant`,ymax=`0.975quant`), alpha=0.2)+

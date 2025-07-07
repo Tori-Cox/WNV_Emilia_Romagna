@@ -1,7 +1,7 @@
 ## plot univariable model outputs
 
 ### linear
-data<-readRDS("output/univar/univar_linear.RDS")
+data <- readRDS("output/univar/univar_linear.RDS")
 data <- bind_rows(data)
 data$var <- data$variable
 
@@ -112,8 +112,6 @@ ggplot(sub, aes(x=var, y=beta_mean, col=group))+
         legend.text = element_text(size =  15))+
   guides(colour = guide_legend(override.aes = list(size=5)))->leg
 
-
-
 if(run!="short"){
 ggarrange(plots[[3]],
           plots[[6]],
@@ -140,7 +138,7 @@ ggarrange(plots[[3]],
 
 
 ### non linear
-beta1<-readRDS("output/univar/univar_nonlinear.RDS")
+beta1 <- readRDS("output/univar/univar_nonlinear.RDS")
 nonlinear_beta <- bind_rows(beta1)
 unique(nonlinear_beta$var)
 
