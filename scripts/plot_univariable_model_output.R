@@ -49,7 +49,7 @@ data$group2[substring(data$variable,1,5)=="avian"]<- "Avian WNV presence"
 
 data$group <- sub("z", "Presence", data$group) 
 data$group <- sub("y", "Prevalence", data$group)
-data %>% rename(beta_low=`0.025quant`, beta_upp=`0.975quant`, beta_mean=mean) ->data
+data |> rename(beta_low=`0.025quant`, beta_upp=`0.975quant`, beta_mean=mean) -> data
 
 plots<-list()
 for(i in 1:length(unique(data$group2))){

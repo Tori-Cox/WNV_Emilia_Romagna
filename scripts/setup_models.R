@@ -5,7 +5,7 @@ n <- length(unique(data$trap))
 m <- length(unique(data$year_no))
 
 ## separate presence and prevalence
-data %>%  mutate(variable = IR, variable2 = IR) ->new
+data |>  mutate(variable = IR, variable2 = IR) -> new
 z <- (new$IR > 0)
 y <- ifelse(z == 1, unlist(new$IR), NA)
 
