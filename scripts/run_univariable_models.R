@@ -96,8 +96,8 @@ for(i in 1:length(variable_z_tot)){
   beta$group <-"y"
   beta2$group<-"z"
   
-  beta<-cbind(variable_z_tot[i], beta)
-  beta2<-cbind(variable_y_tot[i], beta2)
+  beta<-cbind(variable_y_tot[i], beta)
+  beta2<-cbind(variable_z_tot[i], beta2)
   colnames(beta)[1]<-colnames(beta2)[1]<-"variable"
   beta$waic<-waic
   beta2$waic<-waic

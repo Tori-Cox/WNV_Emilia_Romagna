@@ -57,16 +57,15 @@ run_multivar1_nl <- function(temp_data,
     
     waic <- res[[i]]$waic$waic
     
-    beta<-res[[i]]$summary.random$`temp_data[[variable_z[i]]]`
-    beta2<-res[[i]]$summary.random$`temp_data[[variable_y[i]]]`
-    beta$group <-"z"
-    beta2$group<-"y"
+    beta <- res[[i]]$summary.random$`temp_data[[variable_z[i]]]`
+    beta2 <- res[[i]]$summary.random$`temp_data[[variable_y[i]]]`
+    beta$group <- "z"
+    beta2$group <- "y"
     
-    beta<-cbind(variable_z[i], beta)
-    beta2<-cbind(variable_y[i], beta2)
-    colnames(beta)[1]<-colnames(beta2)[1]<-"variable"
-    beta$waic<-waic
-    beta2$waic<-waic
+    beta <- cbind(variable_z[i], beta)
+    beta2 <- cbind(variable_y[i], beta2)
+    colnames(beta)[1] <- colnames(beta2)[1] <- "variable"
+    beta$waic <- beta2$waic <- waic
     
     dataframe[[i]] <- rbind(beta,beta2)
     saveRDS(dataframe,"output/multivar/step1_nonlinear.RDS")

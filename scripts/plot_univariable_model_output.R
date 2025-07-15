@@ -5,53 +5,31 @@ data <- readRDS("output/univar/univar_linear.RDS")
 data <- bind_rows(data)
 data$var <- data$variable
 
-data$var <-sub("WEEKLY_AV_LEAFW_03","Previous 0-3 weeks", data$var)
-data$var <-sub("WEEKLY_AV_LEAFW_02","Previous 0-2 weeks", data$var)
-data$var <-sub("WEEKLY_AV_LEAFW_01","Previous 0-1 weeks", data$var)
-data$var <-sub("WEEKLY_AV_LEAFW_3","Week t -3", data$var)
-data$var <-sub("WEEKLY_AV_LEAFW_2","Week t -2", data$var)
-data$var <-sub("WEEKLY_AV_LEAFW_1","Week t -1", data$var)
-data$var <-sub("WEEKLY_AV_LEAFW_0","Week t", data$var)
-data$var <-sub("WEEKLY_CUM_LEAFW_03","Previous 0-3 weeks", data$var)
-data$var <-sub("WEEKLY_CUM_LEAFW_02","Previous 0-2 weeks", data$var)
-data$var <-sub("WEEKLY_CUM_LEAFW_01","Previous 0-1 weeks", data$var)
-data$var <-sub("WEEKLY_CUM_LEAFW_3","Week t -3", data$var)
-data$var <-sub("WEEKLY_CUM_LEAFW_2","Week t -2", data$var)
-data$var <-sub("WEEKLY_CUM_LEAFW_1","Week t -1", data$var)
-data$var <-sub("WEEKLY_CUM_LEAFW_0","Week t", data$var)
-data$var <-sub("WEEKLY_CUM_PREC_03","Previous 0-3 weeks", data$var)
-data$var <-sub("WEEKLY_CUM_PREC_02","Previous 0-2 weeks", data$var)
-data$var <-sub("WEEKLY_CUM_PREC_01","Previous 0-1 weeks", data$var)
-data$var <-sub("WEEKLY_CUM_PREC_3","Week t -3", data$var)
-data$var <-sub("WEEKLY_CUM_PREC_2","Week t -2", data$var)
-data$var <-sub("WEEKLY_CUM_PREC_1","Week t -1", data$var)
-data$var <-sub("WEEKLY_CUM_PREC_0","Week t", data$var)
-data$var <-sub("WEEKLY_AV_RHAVG_03","Previous 0-3 weeks", data$var)
-data$var <-sub("WEEKLY_AV_RHAVG_02","Previous 0-2 weeks", data$var)
-data$var <-sub("WEEKLY_AV_RHAVG_01","Previous 0-1 weeks", data$var)
-data$var <-sub("WEEKLY_AV_RHAVG_3","Week t -3", data$var)
-data$var <-sub("WEEKLY_AV_RHAVG_2","Week t -2", data$var)
-data$var <-sub("WEEKLY_AV_RHAVG_1","Week t -1", data$var)
-data$var <-sub("WEEKLY_AV_RHAVG_0","Week t", data$var)
-data$var <-sub("alt","Elevation", data$var)
+data |> 
+  mutate(var=variable) |>
+  mutate(var=case_when(str_detect(var, "_3") ~ "Week t -3",
+                       str_detect(var, "_2") ~ "Week t -2",
+                       str_detect(var, "_1") ~ "Week t -1",
+                       str_detect(var, "_03") ~ "Previous 0-3 weeks",
+                       str_detect(var, "_02") ~ "Previous 0-2 weeks",
+                       str_detect(var, "_01") ~ "Previous 0-1 weeks",
+                       str_detect(var, "_0") ~ "Week t",
+                       str_detect(var, "alt") ~ "Elevation",
+                       .default = var)) |>
+  mutate(group2 = case_when(str_detect(variable, "alt") ~ "Elevation",
+                            str_detect(variable, "CLC") ~ "CLC Landuse category",
+                            str_detect(variable, "WEEKLY_AV_RH") ~ "Mean relative humidity",
+         str_detect(variable, "WEEKLY_AV_RA") ~ "Radiation",
+         str_detect(variable, "WEEKLY_AV_LE") ~ "Average hours of leaf wetness",
+         str_detect(variable, "WEEKLY_CUM_LE") ~ "Cumulative hours of leaf wetness",
+         str_detect(variable, "WEEKLY_CUM_P") ~ "Cumulative precipitation",
+         str_detect(variable, "avian") ~ "Avian WNV presence",
+         .default=NA)) |>
+  mutate(group = case_when(str_detect(group, "z") ~ "Presence",
+                           str_detect(group, "y") ~ "Prevalence",.default=group)) |>
+  rename(beta_low=`0.025quant`, beta_upp=`0.975quant`, beta_mean=mean) -> data
 
-data$group2<-NA
-
-data$group2[data$variable=="alt"] <- "Elevation"
-data$group2[substring(data$variable,1,3)=="CLC"]<- "CLC Landuse category"
-data$group2[substring(data$variable,1,12)=="WEEKLY_AV_RH"]<- "Mean relative humidity"
-data$group2[substring(data$variable,1,12)=="WEEKLY_AV_RA"]<- "Radiation"
-data$group2[substring(data$variable,1,12)=="WEEKLY_AV_LE"]<- "Average hours of leaf wetness"
-data$group2[substring(data$variable,1,12)=="WEEKLY_AV_LE"]<- "Average hours of leaf wetness"
-data$group2[substring(data$variable,1,12)=="WEEKLY_CUM_L"]<- "Cumulative hours of leaf wetness"
-data$group2[substring(data$variable,1,12)=="WEEKLY_CUM_P"]<- "Cumulative precipitation"
-data$group2[substring(data$variable,1,5)=="avian"]<- "Avian WNV presence"
-
-data$group <- sub("z", "Presence", data$group) 
-data$group <- sub("y", "Prevalence", data$group)
-data |> rename(beta_low=`0.025quant`, beta_upp=`0.975quant`, beta_mean=mean) -> data
-
-plots<-list()
+plots <- list()
 for(i in 1:length(unique(data$group2))){
   sub<-data[data$group2 == unique(data$group2)[i],]
   lim1<- ifelse(min(sub$beta_low,na.rm=T)< -max(sub$beta_upp,na.rm=T),
@@ -76,11 +54,10 @@ for(i in 1:length(unique(data$group2))){
       theme(legend.title=element_blank(),
             legend.text = element_text(size=15),
             legend.position="none",
-            #plot.title = element_text(size=15,hjust=0.5),
-            axis.text=element_text(size=12),
+            axis.text=element_text(size=8),
             axis.text.y = element_blank(),
             axis.ticks.y = element_blank(),
-            plot.title = element_text(size=15,hjust=0.5))}else{
+            plot.title = element_text(size=8,hjust=0.5))}else{
               plots[[i]]<-
                 ggplot(sub)+ 
                 geom_hline(aes(yintercept = 0), linetype="dashed") +
@@ -97,8 +74,8 @@ for(i in 1:length(unique(data$group2))){
                 theme(legend.title=element_blank(),
                       legend.position="none",
                       legend.text = element_text(size=15),
-                      plot.title = element_text(size=15,hjust=0.5),
-                      axis.text=element_text(size=12))
+                      plot.title = element_text(size=8,hjust=0.5),
+                      axis.text=element_text(size=8))
             }
 }
 
@@ -121,7 +98,7 @@ ggarrange(plots[[3]],
           plots[[2]],
           plots[[1]],
           leg,
-          ncol=3,nrow=3,
+          ncol=2,nrow=4,
           align="hv",
           labels=c('A', 'B','C', 'D', 'E', 'F','G',  NA),
           common.legend = F)-> plots_linear

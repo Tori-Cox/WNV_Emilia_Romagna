@@ -2,7 +2,7 @@ source("R/multivariable_models.R")
 
 ## run step 1 ------------------------------------------------------------------
 
-remove <- narrow_variables(stk.yz, data, best_previous=best_univariable, run=run)
+remove <- narrow_variables(stk.yz, data=new, best_previous=best_univariable[1], run=run)
 
 # nonlinear
 variable_z_tot <- names(temp_data)[c(7:55)]
@@ -12,8 +12,8 @@ if(run=="short"){
   variable_y_tot<-variable_y_tot[1]
 }
 
-variable_z_1 <- variable_z_tot[!variable_z_tot%in% paste0(remove,"_z")]
-variable_y_1 <- variable_y_tot[!variable_y_tot%in% paste0(remove,"_y")]
+variable_z_1 <- variable_z_tot[!variable_z_tot %in% paste0(remove,"_z")]
+variable_y_1 <- variable_y_tot[!variable_y_tot %in% paste0(remove,"_y")]
 
 if(length(variable_z_1)>0){
   

@@ -44,8 +44,8 @@ formula <- Y ~ -1 + z.intercept + y.intercept +
 
 res <- inla(formula, 
                   family = c("gamma", "binomial"),
-                  data = inla.stack.data(data_stack), 
-                  control.predictor = list(A = inla.stack.A(data_stack), link=link), 
+                  data = inla.stack.data(data_stack_q), 
+                  control.predictor = list(A = inla.stack.A(data_stack_q), link=link), 
                   control.family = list(list(link="log", hyper=list(prec=pcgprior)), list(link="logit")),
                   control.compute = list(waic = TRUE, config = TRUE),
                   control.inla = list(int.strategy = "eb", stupid.search=T, strategy = 'adaptive'),
@@ -56,8 +56,8 @@ store <- res$summary.random$testvar1
 store2 <- res$summary.random$testvar2
 store$variable <- TV
 store2$variable <- TV
-store$part <-"z"
-store2$part <-"y"
+store$part <-"Presence"
+store2$part <-"Prevalence"
 store <- rbind(store,store2)
 saveRDS(store, paste0("output/base/", TV, "_quantile_betas.RDS"))
 
@@ -66,7 +66,7 @@ store$ID2 <- factor(store$ID2,c("0-10%","11-20%","21-30%","31-40%","41-50%","51-
 
 p <- ggplot(store)+facet_grid("part", scales="free")+
   geom_point(aes(ID2,y=mean))+geom_errorbar(aes(x=ID2,ymin=`0.025quant`,ymax=`0.975quant`))+
-  theme_bw()+labs( x="Quantiles",y="Coefficient")+ #
+  theme_bw()+labs( x="Quantiles",y="Coefficient", title = TV)+ 
   theme(axis.text=element_text(size=10),axis.title=element_text(size=12))
 print(p)
 

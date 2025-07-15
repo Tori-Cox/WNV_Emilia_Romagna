@@ -8,12 +8,11 @@ visualise_field_medians <- function(res, stk.yz, mesh, m=10, summary="median"){
   idx.y <- inla.stack.index(stk.yz, 'est.y')$data
   
   projgrid <- inla.mesh.projector(
-    mesh_n1, 
-    xlim = range(mesh_n1$loc[,1]),
-    ylim = range(mesh_n1$loc[,2]))
+    mesh, 
+    xlim = range(mesh$loc[,1]),
+    ylim = range(mesh$loc[,2]))
   
   cp = colorRampPalette(c("blue","cyan","yellow","red"))
-  new_shapefile_sf <- sf::as_Spatial(new_shapefile)
   
   zmean <- ymean <- zsd <- ysd <- zlo <- ylo <-zupp <-yupp <-list()
   for (j in 1:m){
@@ -44,7 +43,7 @@ visualise_field_medians <- function(res, stk.yz, mesh, m=10, summary="median"){
                             at = c(-Inf, seq(-3, 3, by = 0.1), Inf),
                             contour=F,labels=F,
                             xlab=NULL,ylab=NULL,scales=list(draw=FALSE))+ 
-      latticeExtra::layer(sp.polygons(new_shapefile_sf, lwd=0.9, col='black'))#+
+      latticeExtra::layer(sp.polygons(shapefile_sf, lwd=0.9, col='black'))#+
     
     ystore[[i]]<- levelplot(row.values=projgrid$x,
                             column.values=projgrid$y,
@@ -53,7 +52,7 @@ visualise_field_medians <- function(res, stk.yz, mesh, m=10, summary="median"){
                             at = c(-Inf, seq(-0.6, 1, by = 0.1), Inf),
                             contour=F,labels=F,
                             xlab=NULL,ylab=NULL,scales=list(draw=FALSE))+ 
-      latticeExtra::layer(sp.polygons(new_shapefile_sf, lwd=0.9, col='black'))#+
+      latticeExtra::layer(sp.polygons(shapefile_sf, lwd=0.9, col='black'))#+
     
     z2store[[i]]<- levelplot(row.values=projgrid$x,
                              column.values=projgrid$y,
@@ -62,7 +61,7 @@ visualise_field_medians <- function(res, stk.yz, mesh, m=10, summary="median"){
                              at = c(-Inf, seq(-10, -3, by = 0.05), Inf),
                              contour=F,labels=F,
                              xlab=NULL,ylab=NULL,scales=list(draw=FALSE))+ 
-      latticeExtra::layer(sp.polygons(new_shapefile_sf, lwd=0.9, col='black'))#+
+      latticeExtra::layer(sp.polygons(shapefile_sf, lwd=0.9, col='black'))#+
     
     y2store[[i]]<- levelplot(row.values=projgrid$x,
                              column.values=projgrid$y,
@@ -71,7 +70,7 @@ visualise_field_medians <- function(res, stk.yz, mesh, m=10, summary="median"){
                              at = c(-Inf, seq(-1.5, 0, by = 0.05), Inf),
                              contour=F,labels=F,
                              xlab=NULL,ylab=NULL,scales=list(draw=FALSE))+ 
-      latticeExtra::layer(sp.polygons(new_shapefile_sf, lwd=0.9, col='black'))#+
+      latticeExtra::layer(sp.polygons(shapefile_sf, lwd=0.9, col='black'))#+
     
     z3store[[i]]<- levelplot(row.values=projgrid$x,
                              column.values=projgrid$y,
@@ -80,7 +79,7 @@ visualise_field_medians <- function(res, stk.yz, mesh, m=10, summary="median"){
                              at = c(-Inf, seq(-1, 10, by = 0.05), Inf),
                              contour=F,labels=F,
                              xlab=NULL,ylab=NULL,scales=list(draw=FALSE))+ 
-      latticeExtra::layer(sp.polygons(new_shapefile_sf, lwd=0.9, col='black'))#+
+      latticeExtra::layer(sp.polygons(shapefile_sf, lwd=0.9, col='black'))#+
     
     y3store[[i]]<- levelplot(row.values=projgrid$x,
                              column.values=projgrid$y,
@@ -89,7 +88,7 @@ visualise_field_medians <- function(res, stk.yz, mesh, m=10, summary="median"){
                              at = c(-Inf, seq(0, 1.4, by = 0.05), Inf),
                              contour=F,labels=F,
                              xlab=NULL,ylab=NULL,scales=list(draw=FALSE))+ 
-      latticeExtra::layer(sp.polygons(new_shapefile_sf, lwd=0.9, col='black'))
+      latticeExtra::layer(sp.polygons(shapefile_sf, lwd=0.9, col='black'))
   }
   
   a<-plot_grid(zstore[[1]], 

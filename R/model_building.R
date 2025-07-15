@@ -2,17 +2,18 @@ best_univar <- function(univar_nl, univar_l){
   
   nl<- bind_rows(univar_nl)
   l <- bind_rows(univar_l)
+  l |> filter(`0.025quant` < 0 & `0.975quant` <0 | `0.025quant` > 0 & `0.975quant` > 0) -> l
   
-  univar_results_table <-rbind(nl,l%>%mutate(ID=NA))
-  
-  univar_results_table |> filter(`0.025quant` < 0 & `0.975quant` <0 | `0.025quant` > 0 & `0.975quant` >0)->sig
-  unique(sig$var[sig$waic==min(sig$waic)]) ->var
-  waic<-min(sig$waic)
+  sig <- rbind(nl,l |> mutate(ID=NA))
+  unique(sig$var[sig$waic==min(sig$waic)]) -> var
+  #var |> str_remove("_y") |> str_remove("_z") -> var
+  waic <- min(sig$waic)
   return(c(var,waic))
 }
 
 colinarity_check <- function(data=new, all_variables, variable_chosen){
   
+  variable_chosen |> str_remove("_y") |> str_remove("_z") -> variable_chosen
   m.cor = abs(cor(data[,all_variables],use="complete.obs", method="pearson"))
   var<-variable_chosen
   sub1 <- m.cor[,colnames(m.cor)==var] #subset just the chosen variable

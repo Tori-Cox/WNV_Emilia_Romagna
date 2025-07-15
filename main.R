@@ -32,8 +32,9 @@ plot_mesh(new_shapefile, mesh_n1)
 source("scripts/run_baseline_model.R")
 source("R/plot_models.R")
 summary(baseline_model)
-visualise_field_medians(res=baseline_model, stk.yz=stk.yz, mesh = mesh_n1, summary="median")
-plot_field_parameters(res=baseline_model)  
+shapefile_sf <- sf::as_Spatial(new_shapefile)
+visualise_field_medians(res = baseline_model, stk.yz = stk.yz, mesh = mesh_n1, summary = "median")
+plot_field_parameters(res = baseline_model)  
     
 
 ####################################################################################
@@ -52,13 +53,13 @@ source("R/model_building.R")
 
 best_univariable <- best_univar(univar_nl = readRDS("output/univar/univar_nonlinear.RDS"),
                                 univar_l = readRDS("output/univar/univar_linear.RDS"))
-print(paste0("best univariable model = ", best_univariable[1]))
+print(paste0("best univariable model = ", best_univariable[1] |> str_remove("_y") |> str_remove("_z")))
 
 
 # plot univariable outputs
 source("scripts/plot_univariable_model_output.R")
-ggsave(plot=plots_linear, "output/plot_univar_linear.png")
-ggsave(plot=plots_nonlinear, "output/plot_univar_nonlinear.png")
+ggsave(plot=plots_linear, "output/plot_univar_linear.png", units="cm", width=20, height=15)
+ggsave(plot=plots_nonlinear, "output/plot_univar_nonlinear.png", units="cm", width=30, height=20)
 
 
 ####################################################################################

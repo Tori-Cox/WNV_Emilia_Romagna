@@ -21,7 +21,8 @@ field.y.idx <- inla.spde.make.index(name = 'u',
                                     n.spde = spde$n.spde,n.group = m) # amount y
 
 
-## set up new stacks for SPDE models (after initial analysis deciding non linear vs linear for each variable)
+## set up new stacks for SPDE models 
+  ## (after initial analysis deciding non linear vs linear for each variable using 'scripts/run_quantile_models.R')
 stk.z <- inla.stack(
   data = list(Y = cbind(NA,z), link=2),
   A = list(A, 1,1),
@@ -89,7 +90,7 @@ stk.z <- inla.stack(
                    
                    avian_WNV_bin    =cbind(rep(NA, length(z)), ( new$avian_WNV_bin))   , 
                    
-                   alt    =cbind(rep(NA, length(z)), ( new$z))   , 
+                   alt    =cbind(rep(NA, length(z)), ( new$alt))   , 
                    
                    CLC1    =cbind(rep(NA, length(z)), ( new$CLC1))   , 
                    CLC2    =cbind(rep(NA, length(z)), ( new$CLC2))   , 
