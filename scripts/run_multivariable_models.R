@@ -27,7 +27,7 @@ saveRDS(t,"output/multivar/multivar1_nonlinear.RDS")
 
   
 }else{
-  print("no more non linear variables left to try in the model building steps")
+  print("no non linear variables left to try in the model building steps")
 }
 
 # linear
@@ -50,7 +50,7 @@ if(length(variable_z_1)>0){
   
 
 }else{
-  print("no more linear variables left to try in the model building steps")
+  print("no linear variables left to try in the model building steps")
 }
 
 # which variable is chosen after step 1
@@ -65,7 +65,7 @@ if(file.exists("output/multivar/multivar1_linear.RDS")){
   l_step1_result<-NULL
 }
 best_step1 <- best_univar(nl_step1_result,l_step1_result)
-print(paste0("best step 1 model = ", best_step1[1]))
+print(paste0("best step 1 model = ", best_step1[1] |> str_remove("_y") |> str_remove("_z")))
 
 if(run!="short"){
   
@@ -94,13 +94,13 @@ if(run!="short"){
     
     
   }else{
-    print("no more non linear variables left to try in the model building steps")
+    print("no non linear variables left to try in the model building steps")
   }
   
   # linear
   variable_z_tot <- names(temp_data)[c(56:90)]
-  variable_z_1 <- variable_z_tot[!variable_z_tot %in% paste0(remove,"_z")]
-  variable_y_1 <- variable_y_tot[!variable_y_tot %in% paste0(remove,"_y")]
+  variable_z_1 <- variable_z_tot[!variable_z_tot %in% remove]
+  variable_y_1 <- variable_y_tot[!variable_y_tot %in% remove]
   
   if(length(variable_z_1)>0){
     
@@ -115,7 +115,7 @@ if(run!="short"){
     
     
   }else{
-    print("no more linear variables left to try in the model building steps")
+    print("no linear variables left to try in the model building steps")
   }
   
   # which variable is chosen after step 2
@@ -130,7 +130,7 @@ if(run!="short"){
     l_step2_result<-NULL
   }
   best_step2 <- best_univar(nl_step2_result,l_step2_result)
-  print(paste0("best step 2 model = ", best_step2[1]))
+  print(paste0("best step 2 model = ", best_step2[1] |> str_remove("_y") |> str_remove("_z")))
   
   
 ## run step 3 ------------------------------------------------------------------
@@ -158,13 +158,13 @@ if(run!="short"){
     
     
   }else{
-    print("no more non linear variables left to try in the model building steps")
+    print("no non linear variables left to try in the model building steps")
   }
   
   # linear
   variable_z_tot <- names(temp_data)[c(56:90)]
-  variable_z_1 <- variable_z_tot[!variable_z_tot %in% paste0(remove,"_z")]
-  variable_y_1 <- variable_y_tot[!variable_y_tot %in% paste0(remove,"_y")]
+  variable_z_1 <- variable_z_tot[!variable_z_tot %in% remove]
+  variable_y_1 <- variable_y_tot[!variable_y_tot %in% remove]
   
   if(length(variable_z_1)>0){
     
@@ -180,7 +180,7 @@ if(run!="short"){
     
     
   }else{
-    print("no more linear variables left to try in the model building steps")
+    print("no linear variables left to try in the model building steps")
   }
   
   # which variable is chosen after step 2
@@ -195,6 +195,6 @@ if(run!="short"){
     l_step3_result<-NULL
   }
   best_step3 <- best_univar(nl_step3_result,l_step3_result)
-  print(paste0("best step 3 model = ", best_step3[1]))
+  print(paste0("best step 3 model = ", best_step3[1] |> str_remove("_y") |> str_remove("_z")))
   
 }
