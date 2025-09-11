@@ -1,13 +1,13 @@
 
 ## prepare shapefile
 prepare_shapefile <- function(shapefile){
-  # get rid of internal boundaries
-  no_boundary_shapefile <- rgeos::gUnaryUnion(shapefile) 
+  
+  no_boundary_shapefile <- readRDS("data/Emilia_Romagna_outline.RDS")
   
   # crop to emilia romagna and surrounding region
   shapefile_ER <- sf::st_as_sf(shapefile) |>    filter(NAME_1  == "Emilia-Romagna"|NAME_1  == "Veneto"|NAME_1  == "Lombardia" ) 
   
-  ext <- extent(9.2,13.1,44.2,45.4) # manually pick where to crop shapefile based on extent from ER line above
+  ext <- extent(9.2,13.1,44.2,45.4) # manually pick where to crop shapefile based on extent from ER
   terra::crop(no_boundary_shapefile,ext) -> new_shapefile
   
   # project the new CRS 
