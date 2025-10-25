@@ -42,8 +42,8 @@ narrow_variables <- function(stk.yz, data=new, best_previous, run="short"){
   }
   variable_z_tot_n <- sub("\\_[^_]*$", "", variable_z_tot)
   
-  if(length(best_previous)>2){choice<-"nonlinear"}
-  if(length(best_previous)==2){choice<-"linear"}
+  if(str_detect(best_previous, "_y") | str_detect(best_previous, "_x")){choice<-"nonlinear"}
+  if(!str_detect(best_previous, "_y") & !str_detect(best_previous, "_x")){choice<-"linear"}
   
   if(choice=="nonlinear"){best_previous<-sub("\\_[^_]*$", "", best_previous[1])}else{best_previous<-best_previous[1]}
   

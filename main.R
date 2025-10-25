@@ -14,8 +14,12 @@ dir.create("output/base")
 shapefile <- readRDS("data/gadm36_ITA_1_sp.rds")
 
 # estimated WNV prevalence and collated meteorological/ avian/ land use data
-# the data is collated ready for INLA models, see data description in paper for methods
-data <- readRDS("data/hurdle_data.RDS")
+# the data in data/hurdle_data.RDS is collated ready for INLA models
+  # see data/avian/ folder for avian data options (sensitivities are described in the paper)
+  # see data/mosquito_data.RDS for raw mosquito pool data
+  # see scripts/estimate_IR.R for estimation of mosquito WNV prevalence from mosquito pool data
+
+data <- readRDS("data/hurdle_data.RDS") 
 
 # SPDE model components
 mesh_n1 <- readRDS("data/mesh.RDS")
@@ -29,6 +33,7 @@ source("scripts/setup_models.R")
 plot_mesh(new_shapefile, mesh_n1)
 
 # run baseline model
+# to run the basleine model without the spatial fields - see code in 'scripts/sensitivity_without_spatial/'
 source("scripts/run_baseline_model.R")
 source("R/plot_models.R")
 summary(baseline_model)
@@ -41,7 +46,7 @@ plot_field_parameters(res = baseline_model)
 ########################## Univariable analysis ####################################
 ####################################################################################
 
-# run an example showing the quantile method to determine which variables were linear versus non-linear
+# run *an example* showing the quantile method to determine which variables were linear versus non-linear
 # can skip this step
 source("scripts/run_quantile_models.R")
 
@@ -73,7 +78,7 @@ source("scripts/run_multivariable_models.R")
 
 ## run the final model ---------------------------------------------------------
 
-# this is pre-set to be the variables chosen in the analysis in the paper
+# this is pre-set to the variables chosen in the analysis in the paper
 source("scripts/run_final_model.R")
 summary(final_model)
 print(final_model_plots)
@@ -85,6 +90,7 @@ saveRDS(final_model, "output/final_model.RDS")
 
 ## assessment of model fit -----------------------------------------------------
 source("R/model_fit_functions.R")
+source("scripts/model_comparison_with_human_data.R")
 
 # receiver operating characteristic curve to assess binary classifier of hurdle model
 ROC_curve(res=final_model, stk.yz, z)
@@ -94,3 +100,10 @@ model_fit(res=final_model, stk.yz, z, data=new)
 
 # mean absolute error averaged over space, shown for each year and week number of the transmission season
 model_mae_annual(res=final_model, stk.yz, data=new)
+
+# comparison of temporal trends of model estimates and human infection data
+human_data <- readRDS("data/human_infection_data.RDS")
+
+plot_comparison_human_model(res=final_model,
+                            data=new,
+                            human_data=human_data)
