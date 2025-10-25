@@ -104,6 +104,14 @@ model_mae_annual(res=final_model, stk.yz, data=new)
 # comparison of temporal trends of model estimates and human infection data
 human_data <- readRDS("data/human_infection_data.RDS")
 
-plot_comparison_human_model(res=final_model,
+calculated_human_comp <- calc_comparison_human_model(res=final_model,
                             data=new,
+                            stk.yz =stk.yz,
                             human_data=human_data)
+
+plot_comparison_human_model(ccf_data=calculated_human_comp[[1]],
+                            M=calculated_human_comp[[2]], 
+                            human_data=calculated_human_comp[[3]],
+                            store_est_mosq=calculated_human_comp[[4]],
+                            store_timeseries=calculated_human_comp[[5]], 
+                            store_timeseries_traps=calculated_human_comp[[6]])

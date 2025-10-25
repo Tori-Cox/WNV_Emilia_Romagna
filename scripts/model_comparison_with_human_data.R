@@ -1,9 +1,26 @@
 ## comparing final model output with human data
 
-plot_comparison_human_model <- function(res, data, human_data){
+get_corr_plot <- function(matrix) {
+  corrplot::corrplot(matrix, 
+                     method = "circle", 
+           col = colorRampPalette(c("blue","lightblue", "white","white","pink", "red"))(300),
+           title="",
+           tl.col="black", tl.cex=1, tl.srt=90)
+  
+  p <- recordPlot()
+  
+  return(p)
+}
+
+
+calc_comparison_human_model <- function(res, stk.yz, data, human_data){
   
 max_week <-39 
 min_week <-18 
+
+idx.z <- inla.stack.index(stk.yz, 'est.z')$data
+idx.y <- inla.stack.index(stk.yz, 'est.y')$data
+
 
 ## prepare mosquito estimate metrics -------------------------------------------------
 
@@ -119,7 +136,7 @@ for(year_i in 2013:2022){
   store_timeseries<-rbind(store_timeseries,smoothed_ts1)
 }
 
-M <- (cor(store[c(2,3,6,4,5)], store_m_traps[c(2,7,3,8)]))
+M <- (cor(store[c(2,3,6,4,5)], store_m_traps[c(2,4,3,5)]))
 
 colnames(M) <- c("1M\nPeak week", "2M\nPeak week\n(smoothed)",
                  "3M\nValue at peak", "4M\nValue at peak\n(smoothed)")
@@ -127,8 +144,6 @@ rownames(M) <- c("1H\nWeek first case",
                  "2H\nPeak week", "3H\nPeak week\n(smoothed)",
                  "4H\nCases at peak", 
                  "5H\nTotal cases")
-custom_colors <- colorRampPalette(c("blue","lightblue", "white","white","pink", "red"))(300)
-
 
 ## correlation on annual timeseries
 ccf_list<-list()
@@ -137,9 +152,17 @@ for(year_i in 1:10){
   ccf_list[[year_i]] <- ccf(store_timeseries$smooth[store_timeseries$year==year_i+2012], 
                             store_timeseries_traps$smooth[store_timeseries_traps$year==year_i+2012], 
                             
-                            lag.max = 6, plot = TRUE)
+                            lag.max = 6, plot = FALSE)
   ccf_data[ccf_data$Year==year_i+2012, 2:8] <- ccf_list[[year_i]]$acf[,,][7:13]
 }
+
+return(list(ccf_data, M, human_data, store_est_mosq,
+       store_timeseries, store_timeseries_traps))
+}
+
+
+plot_comparison_human_model <- function(ccf_data, M, human_data, store_est_mosq,
+                                        store_timeseries, store_timeseries_traps){
 
 ccf_data |>
   pivot_longer(cols=2:8)|>
@@ -224,19 +247,10 @@ cowplot::plot_grid(plots_store[[1]],plots_store[[2]],plots_store[[3]],
                    leg,
                    nrow=4, ncol=3)-> human_plot
 
-get_corr_plot <- function(matrix) {
-  corrplot(matrix, method = "circle", col = custom_colors,
-           title="",#"Correlation between human cases (y)\nand estimated mosquito prevalence (x)", mar=c(0,0,4,0),
-           tl.col="black", tl.cex=1, tl.srt=90)
-  
-  p <- recordPlot()
-  
-  return(p)
-}
-
 grob_corr <- ggplotify::as.grob(~get_corr_plot(matrix = M))
-plot_grid(corr_plot_h, grob_corr, ncol=1,rel_heights = c(1,1.5), labels=c("B","C")) -> panel
+plot_grid(corr_plot_h, grob_corr, ncol=1, rel_heights = c(1,1.5), labels=c("B","C")) -> panel
 plot_grid(human_plot, panel, ncol=2, rel_widths=c(1,0.8), labels=c("A",NULL,NULL)) -> main_plot
+
 return(main_plot)
 
 }
